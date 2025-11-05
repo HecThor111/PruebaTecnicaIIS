@@ -1,28 +1,33 @@
 name: build-local-runner
-
 on:
+  workflow_dispatch:
   push:
     branches: [ "main" ]
-  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: self-hosted   # Usa tu runner local
+    runs-on: [self-hosted, Windows, X64]   # ← usa tu runner hector-local
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-dotnet@v4
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
+      - name: Dotnet info
+        run: dotnet --info
+        shell: pwsh
+
       - name: Restore
-        run: dotnet restore ./PruebaTecnicaIIS/PruebaTecnicaIIS.csproj
+        run: dotnet restore ./PruebaTecnicaIIS.csproj
         shell: pwsh
 
       - name: Build
-        run: dotnet build ./PruebaTecnicaIIS/PruebaTecnicaIIS.csproj -c Release --no-restore
+        run: dotnet build ./PruebaTecnicaIIS.csproj -c Release --no-restore
         shell: pwsh
 
       - name: Publish
-        run: dotnet publish ./PruebaTecnicaIIS/PruebaTecnicaIIS.csproj -c Release -o ./publish --no-build
+        run: dotnet publish ./PruebaTecnicaIIS.csproj -c Release -o ./publish --no-build
         shell: pwsh
