@@ -1,0 +1,28 @@
+name: build-local-runner
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: self-hosted   # Usa tu runner local
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore ./PruebaTecnicaIIS/PruebaTecnicaIIS.csproj
+        shell: pwsh
+
+      - name: Build
+        run: dotnet build ./PruebaTecnicaIIS/PruebaTecnicaIIS.csproj -c Release --no-restore
+        shell: pwsh
+
+      - name: Publish
+        run: dotnet publish ./PruebaTecnicaIIS/PruebaTecnicaIIS.csproj -c Release -o ./publish --no-build
+        shell: pwsh
